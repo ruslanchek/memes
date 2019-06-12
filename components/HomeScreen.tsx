@@ -71,7 +71,7 @@ export class HomeScreen extends Component<IProps, IState> {
             return item.id.toString();
           }}
           renderItem={data => {
-            return <Item index={data.index} />;
+            return <Item item={data.item} index={data.index} />;
           }}
           viewabilityConfig={viewabilityConfig}
           onViewableItemsChanged={this.handleViewableItemsChanged}
