@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import { View, StyleSheet, FlatList, Text } from "react-native";
-import { Item, IItem } from "./Item";
+import React, { Component } from 'react';
+import { View, StyleSheet, FlatList, Text } from 'react-native';
+import { Item, IItem } from './Item';
 
 interface IProps {}
 
@@ -9,22 +9,48 @@ interface IState {
   offset: number;
 }
 
-const DATA: IItem[] = [];
+const DATA: IItem[] = [
+  {
+    id: 1,
+    source: 'https://i.imgur.com/SsCrymL.mp4',
+    backgroundColor: '#2b3329',
+  },
 
-for (let i = 0; i < 30; i++) {
-  DATA.push({ id: i });
-}
+  {
+    id: 2,
+    source: 'https://i.imgur.com/uB8oZY7.mp4',
+    backgroundColor: '#7d9669',
+  },
+
+  {
+    id: 3,
+    source: 'https://i.imgur.com/JjMay6m.mp4',
+    backgroundColor: '#2728f0',
+  },
+
+  {
+    id: 4,
+    source: 'https://i.imgur.com/6MQLdNB.mp4',
+    backgroundColor: '#58657d',
+  },
+
+  {
+    id: 5,
+    source: 'https://i.imgur.com/DWx9w6l.gifv',
+    backgroundColor: '#2c3576',
+  },
+];
 
 const viewabilityConfig = {
   itemVisiblePercentThreshold: 100,
   minimumViewTime: 0,
-  waitForInteraction: false
+  waitForInteraction: false,
 };
 
 export class HomeScreen extends Component<IProps, IState> {
   state = {
     currentItemIndex: 0,
-    offset: 0
+    offset: 0,
   };
 
   list: FlatList<IItem> | null = null;
@@ -34,12 +60,10 @@ export class HomeScreen extends Component<IProps, IState> {
 
     if (currentItem && currentItem.index >= 0) {
       this.setState({
-        currentItemIndex: currentItem.index
+        currentItemIndex: currentItem.index,
       });
     }
   };
-
-  calculateOffset() {}
 
   loadMoreData() {}
 
@@ -83,7 +107,7 @@ export class HomeScreen extends Component<IProps, IState> {
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1
+    flex: 1,
   },
 
   flatList: {},
@@ -91,14 +115,14 @@ const styles = StyleSheet.create({
   content: {},
 
   footer: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     padding: 20,
-    width: "100%",
+    width: '100%',
     height: 100,
-    backgroundColor: "rgba(0, 0, 0, .20)",
-    justifyContent: "flex-end",
-    alignItems: "center"
-  }
+    backgroundColor: 'rgba(0, 0, 0, .20)',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
 });

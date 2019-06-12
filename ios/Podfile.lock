@@ -13,6 +13,8 @@ PODS:
     - react-native-video/Video (= 4.4.1)
   - react-native-video/Video (4.4.1):
     - React
+  - React/ART (0.59.9):
+    - React/Core
   - React/Core (0.59.9):
     - yoga (= 0.59.9.React)
   - React/CxxBridge (0.59.9):
@@ -41,13 +43,29 @@ PODS:
     - React/cxxreact
     - React/jsi
   - React/jsinspector (0.59.9)
+  - React/PrivateDatabase (0.59.9)
+  - React/RCTActionSheet (0.59.9):
+    - React/Core
   - React/RCTAnimation (0.59.9):
     - React/Core
   - React/RCTBlob (0.59.9):
     - React/Core
+  - React/RCTGeolocation (0.59.9):
+    - React/Core
+  - React/RCTImage (0.59.9):
+    - React/Core
+    - React/RCTNetwork
+  - React/RCTLinkingIOS (0.59.9):
+    - React/Core
   - React/RCTNetwork (0.59.9):
     - React/Core
+  - React/RCTPushNotification (0.59.9):
+    - React/Core
+  - React/RCTSettings (0.59.9):
+    - React/Core
   - React/RCTText (0.59.9):
+    - React/Core
+  - React/RCTVibration (0.59.9):
     - React/Core
   - React/RCTWebSocket (0.59.9):
     - React/Core
@@ -60,12 +78,24 @@ DEPENDENCIES:
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - react-native-video (from `../node_modules/react-native-video/react-native-video.podspec`)
+  - React/ART (from `../node_modules/react-native`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
+  - React/cxxreact (from `../node_modules/react-native`)
   - React/DevSupport (from `../node_modules/react-native`)
+  - React/fishhook (from `../node_modules/react-native`)
+  - React/jsinspector (from `../node_modules/react-native`)
+  - React/PrivateDatabase (from `../node_modules/react-native`)
+  - React/RCTActionSheet (from `../node_modules/react-native`)
   - React/RCTAnimation (from `../node_modules/react-native`)
+  - React/RCTGeolocation (from `../node_modules/react-native`)
+  - React/RCTImage (from `../node_modules/react-native`)
+  - React/RCTLinkingIOS (from `../node_modules/react-native`)
   - React/RCTNetwork (from `../node_modules/react-native`)
+  - React/RCTPushNotification (from `../node_modules/react-native`)
+  - React/RCTSettings (from `../node_modules/react-native`)
   - React/RCTText (from `../node_modules/react-native`)
+  - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -96,6 +126,6 @@ SPEC CHECKSUMS:
   react-native-video: 481d46031d2a55c2b6fa8aaa9e9ad4a9b215aca5
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: 5c6c7ec63fedb7d6be32823492b81fd873a85fb8
+PODFILE CHECKSUM: 6d327cd3e906d59d8802eb1cd3bdd7801bd77b38
 
 COCOAPODS: 1.6.1

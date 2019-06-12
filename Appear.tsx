@@ -1,9 +1,15 @@
 import React from 'react';
 import { Animated, StyleSheet } from 'react-native';
 
+export enum EAppearType {
+  Spring,
+  Fade,
+  Drop,
+}
+
 interface IProps {
   show: boolean;
-  type: 'spring' | 'fade' | 'drop';
+  type: EAppearType;
   customStyles?: any;
   isReverse?: boolean;
   delay?: number;
@@ -16,17 +22,12 @@ interface IState {
 export class Appear extends React.Component<IProps, IState> {
   state = {
     animated: new Animated.Value(0),
-    dismount: this.props.show,
   };
 
   componentDidMount() {
     if (this.props.show) {
       this.in();
     }
-  }
-
-  shouldComponentUpdate(nexProps: IProps, nextState: IState): boolean {
-    return nexProps.show !== this.props.show;
   }
 
   componentWillReceiveProps(nextProps: IProps) {
@@ -51,7 +52,7 @@ export class Appear extends React.Component<IProps, IState> {
 
   in() {
     switch (this.props.type) {
-      case 'fade': {
+      case EAppearType.Fade: {
         Animated.timing(this.state.animated, {
           toValue: 1,
           delay: this.delay,
@@ -61,8 +62,8 @@ export class Appear extends React.Component<IProps, IState> {
         break;
       }
 
-      case 'spring':
-      case 'drop':
+      case EAppearType.Spring:
+      case EAppearType.Drop:
       default: {
         Animated.spring(this.state.animated, {
           toValue: 1,
@@ -77,7 +78,7 @@ export class Appear extends React.Component<IProps, IState> {
 
   out() {
     switch (this.props.type) {
-      case 'fade': {
+      case EAppearType.Fade: {
         Animated.timing(this.state.animated, {
           toValue: 0,
           duration: 200,
@@ -86,8 +87,8 @@ export class Appear extends React.Component<IProps, IState> {
         break;
       }
 
-      case 'spring':
-      case 'drop':
+      case EAppearType.Spring:
+      case EAppearType.Drop:
       default: {
         Animated.spring(this.state.animated, {
           toValue: 0,
@@ -111,7 +112,7 @@ export class Appear extends React.Component<IProps, IState> {
           {
             opacity: animated,
             transform: [
-              type === 'drop'
+              type === EAppearType.Drop
                 ? {
                     translateY: animated.interpolate({
                       inputRange: [0, 1],
