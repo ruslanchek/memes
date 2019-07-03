@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, FlatList, Text } from 'react-native';
-import { Item, IItem } from './Item';
+import { Item, IItem, EItemType } from './Item';
 
 interface IProps {}
 
@@ -13,31 +13,91 @@ const DATA: IItem[] = [
   {
     id: 1,
     source: 'https://i.imgur.com/SsCrymL.mp4',
-    backgroundColor: '#2b3329',
+    type: EItemType.Video,
+    title: 'Strange Rain',
+    subtitle: 'Strange rain on the road in China',
+    liked: false,
+    by: {
+      name: 'kbowser',
+      id: '14432dsd3409dfsj3lk24n1k29098cx82',
+    },
+    views: 4503,
+    points: 48,
   },
 
   {
     id: 2,
     source: 'https://i.imgur.com/uB8oZY7.mp4',
-    backgroundColor: '#7d9669',
+    type: EItemType.Video,
+    title: 'Strange Rain',
+    subtitle: 'Strange rain on the road in China',
+    liked: false,
+    by: {
+      name: 'kbowser',
+      id: '14432dsd3409dfsj3lk24n1k29098cx82',
+    },
+    views: 4503,
+    points: 48,
   },
 
   {
     id: 3,
     source: 'https://i.imgur.com/JjMay6m.mp4',
-    backgroundColor: '#2728f0',
+    type: EItemType.Video,
+    title: 'Strange Rain',
+    subtitle: 'Strange rain on the road in China',
+    liked: false,
+    by: {
+      name: 'kbowser',
+      id: '14432dsd3409dfsj3lk24n1k29098cx82',
+    },
+    views: 4503,
+    points: 48,
   },
 
   {
     id: 4,
     source: 'https://i.imgur.com/6MQLdNB.mp4',
-    backgroundColor: '#58657d',
+    type: EItemType.Video,
+    title: 'Strange Rain',
+    subtitle: 'Strange rain on the road in China',
+    liked: false,
+    by: {
+      name: 'kbowser',
+      id: '14432dsd3409dfsj3lk24n1k29098cx82',
+    },
+    views: 4503,
+    points: 48,
   },
 
   {
     id: 5,
-    source: 'https://i.imgur.com/DWx9w6l.gifv',
-    backgroundColor: '#2c3576',
+    source: 'https://i.imgur.com/SsCrymL.mp4',
+    type: EItemType.Video,
+    title: 'Strange Rain',
+    subtitle: 'Strange rain on the road in China',
+    liked: false,
+    by: {
+      name: 'kbowser',
+      id: '14432dsd3409dfsj3lk24n1k29098cx82',
+    },
+    views: 4503,
+    points: 48,
+  },
+
+  {
+    id: 6,
+    source: 'https://i.imgur.com/JjMay6m.mp4',
+    type: EItemType.Video,
+    title: 'Strange Rain',
+    subtitle: 'Strange rain on the road in China',
+    liked: false,
+    by: {
+      name: 'kbowser',
+      id: '14432dsd3409dfsj3lk24n1k29098cx82',
+    },
+    views: 4503,
+    points: 48,
   },
 ];
 
