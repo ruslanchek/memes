@@ -1,15 +1,11 @@
 import React from 'react';
 import { Animated, StyleSheet } from 'react-native';
 
-export enum EAppearType {
-  Spring,
-  Fade,
-  Drop,
-}
+export type TAppearType = 'spring' | 'fade' | 'drop';
 
 interface IProps {
   show: boolean;
-  type: EAppearType;
+  type: TAppearType;
   customStyles?: any;
   isReverse?: boolean;
   delay?: number;
@@ -52,7 +48,7 @@ export class Appear extends React.Component<IProps, IState> {
 
   in() {
     switch (this.props.type) {
-      case EAppearType.Fade: {
+      case 'fade': {
         Animated.timing(this.state.animated, {
           toValue: 1,
           delay: this.delay,
@@ -62,8 +58,8 @@ export class Appear extends React.Component<IProps, IState> {
         break;
       }
 
-      case EAppearType.Spring:
-      case EAppearType.Drop:
+      case 'spring':
+      case 'drop':
       default: {
         Animated.spring(this.state.animated, {
           toValue: 1,
@@ -78,7 +74,7 @@ export class Appear extends React.Component<IProps, IState> {
 
   out() {
     switch (this.props.type) {
-      case EAppearType.Fade: {
+      case 'fade': {
         Animated.timing(this.state.animated, {
           toValue: 0,
           duration: 200,
@@ -87,8 +83,8 @@ export class Appear extends React.Component<IProps, IState> {
         break;
       }
 
-      case EAppearType.Spring:
-      case EAppearType.Drop:
+      case 'spring':
+      case 'drop':
       default: {
         Animated.spring(this.state.animated, {
           toValue: 0,
@@ -112,7 +108,7 @@ export class Appear extends React.Component<IProps, IState> {
           {
             opacity: animated,
             transform: [
-              type === EAppearType.Drop
+              type === 'drop'
                 ? {
                     translateY: animated.interpolate({
                       inputRange: [0, 1],

@@ -21,11 +21,11 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>4</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
-		<string>5c91397a5ce378bb9c50350b927c6523798bf59a</string>
+		<string>9ac7faa573d6a1ead2f21a6d4610eab0fc21eb02</string>
 		<key>Kits</key>
 		<array>
 			<dict>

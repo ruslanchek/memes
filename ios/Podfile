@@ -11,26 +11,26 @@ target "memes" do
   # Your 'node_modules' directory is probably in the root of your project,
   # but if not, adjust the `:path` accordingly
   pod "React", :path => "../node_modules/react-native", :subspecs => [
-             "Core",
-             "CxxBridge",
-             "jsinspector",
-             "PrivateDatabase",
-             "cxxreact",
-             "ART",
-             "fishhook",
-             "DevSupport",
-             "RCTActionSheet",
-             "RCTAnimation",
-             "RCTGeolocation",
-             "RCTImage",
-             "RCTLinkingIOS",
-             "RCTNetwork",
-             "RCTSettings",
-             "RCTText",
-             "RCTVibration",
-             "RCTWebSocket",
-             "RCTPushNotification",
-           ]
+                 "Core",
+                 "CxxBridge",
+                 "jsinspector",
+                 "PrivateDatabase",
+                 "cxxreact",
+                 "ART",
+                 "fishhook",
+                 "DevSupport",
+                 "RCTActionSheet",
+                 "RCTAnimation",
+                 "RCTGeolocation",
+                 "RCTImage",
+                 "RCTLinkingIOS",
+                 "RCTNetwork",
+                 "RCTSettings",
+                 "RCTText",
+                 "RCTVibration",
+                 "RCTWebSocket",
+                 "RCTPushNotification",
+               ]
   # Explicitly include Yoga if you are using RN >= 0.42.0
   pod "yoga", :path => "../node_modules/react-native/ReactCommon/yoga"
 
@@ -38,8 +38,10 @@ target "memes" do
   pod "DoubleConversion", :podspec => "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   pod "glog", :podspec => "../node_modules/react-native/third-party-podspecs/glog.podspec"
   pod "Folly", :podspec => "../node_modules/react-native/third-party-podspecs/Folly.podspec"
+  pod "Fabric"
+  pod "Crashlytics"
 
   pod "react-native-video", :path => "../node_modules/react-native-video/react-native-video.podspec"
-  pod 'react-native-blur', :path => '../node_modules/@react-native-community/blur'
-
+  pod "react-native-blur", :path => "../node_modules/@react-native-community/blur"
+  pod "BVLinearGradient", :path => "../node_modules/react-native-linear-gradient"
 end

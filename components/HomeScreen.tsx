@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, FlatList, Text } from 'react-native';
+import { View, StyleSheet, FlatList, Text, ViewToken } from 'react-native';
 import { Item, IItem, EItemType } from './Item';
 
 interface IProps {}
@@ -7,6 +7,7 @@ interface IProps {}
 interface IState {
   currentItemIndex: number;
   offset: number;
+  scrolling: boolean;
 }
 
 const DATA: IItem[] = [
@@ -111,31 +112,38 @@ export class HomeScreen extends Component<IProps, IState> {
   state = {
     currentItemIndex: 0,
     offset: 0,
+    scrolling: false,
   };
 
   list: FlatList<IItem> | null = null;
 
-  handleViewableItemsChanged = (info: any) => {
+  handleViewableItemsChanged = (info: {
+    viewableItems: Array<ViewToken>;
+    changed: Array<ViewToken>;
+  }) => {
     const currentItem = info.viewableItems[0];
 
-    if (currentItem && currentItem.index >= 0) {
+    if (currentItem && currentItem.index! >= 0) {
       this.setState({
-        currentItemIndex: currentItem.index,
+        currentItemIndex: currentItem.index!,
+        scrolling: currentItem.isViewable! ? true : false,
       });
     }
   };
 
   loadMoreData() {}
 
+  handleNextSlide = () => {
+    this.setState({
+      currentItemIndex: this.state.currentItemIndex + 1,
+    });
+  };
+
   render() {
-    const { currentItemIndex } = this.state;
+    const { currentItemIndex, scrolling } = this.state;
 
     return (
       <View style={styles.root}>
-        <View style={styles.footer}>
-          <Text>Current item {currentItemIndex}</Text>
-        </View>
-
         <FlatList<IItem>
           ref={ref => (this.list = ref)}
           data={DATA}
@@ -151,11 +159,19 @@ export class HomeScreen extends Component<IProps, IState> {
           contentContainerStyle={styles.content}
           onEndReached={this.loadMoreData}
           onEndReachedThreshold={0.1}
-          keyExtractor={item => {
+          keyExtractor={(item, index) => {
             return item.id.toString();
           }}
           renderItem={data => {
-            return <Item item={data.item} index={data.index} />;
+            return (
+              <Item
+                onNextSlide={this.handleNextSlide}
+                current={data.index === currentItemIndex}
+                scrolling={scrolling}
+                item={data.item}
+                index={data.index}
+              />
+            );
           }}
           viewabilityConfig={viewabilityConfig}
           onViewableItemsChanged={this.handleViewableItemsChanged}
@@ -168,6 +184,7 @@ export class HomeScreen extends Component<IProps, IState> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    backgroundColor: '#000',
   },
 
   flatList: {},
