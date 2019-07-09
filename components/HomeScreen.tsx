@@ -13,7 +13,8 @@ interface IState {
 const DATA: IItem[] = [
   {
     id: 1,
-    source: 'https://i.imgur.com/SsCrymL.mp4',
+    source:
+      'https://s2.content.video.llnw.net/smedia/42f4e71183054396907c0dea18241568/yd/yLpoUEilVrxhhYSkpsyGMnn9t0N3AYxWmoMsM7Faw/francstireurs_entrevue_ep472_seq24.mpegts/playlist-de5cb50573ac3952cd031f64973a614828771406.m3u8',
     type: EItemType.Video,
     title: 'Strange Rain',
     subtitle: 'Strange rain on the road in China',
@@ -28,7 +29,8 @@ const DATA: IItem[] = [
 
   {
     id: 2,
-    source: 'https://i.imgur.com/uB8oZY7.mp4',
+    source:
+      'https://s2.content.video.llnw.net/smedia/42f4e71183054396907c0dea18241568/yd/yLpoUEilVrxhhYSkpsyGMnn9t0N3AYxWmoMsM7Faw/francstireurs_entrevue_ep472_seq24.mpegts/playlist-de5cb50573ac3952cd031f64973a614828771406.m3u8',
     type: EItemType.Video,
     title: 'Strange Rain',
     subtitle: 'Strange rain on the road in China',
@@ -43,7 +45,8 @@ const DATA: IItem[] = [
 
   {
     id: 3,
-    source: 'https://i.imgur.com/JjMay6m.mp4',
+    source:
+      'https://s2.content.video.llnw.net/smedia/42f4e71183054396907c0dea18241568/yd/yLpoUEilVrxhhYSkpsyGMnn9t0N3AYxWmoMsM7Faw/francstireurs_entrevue_ep472_seq24.mpegts/playlist-de5cb50573ac3952cd031f64973a614828771406.m3u8',
     type: EItemType.Video,
     title: 'Strange Rain',
     subtitle: 'Strange rain on the road in China',
@@ -58,7 +61,8 @@ const DATA: IItem[] = [
 
   {
     id: 4,
-    source: 'https://i.imgur.com/6MQLdNB.mp4',
+    source:
+      'https://s2.content.video.llnw.net/smedia/42f4e71183054396907c0dea18241568/yd/yLpoUEilVrxhhYSkpsyGMnn9t0N3AYxWmoMsM7Faw/francstireurs_entrevue_ep472_seq24.mpegts/playlist-de5cb50573ac3952cd031f64973a614828771406.m3u8',
     type: EItemType.Video,
     title: 'Strange Rain',
     subtitle: 'Strange rain on the road in China',

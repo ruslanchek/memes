@@ -1,15 +1,8 @@
-import React, { FC, useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  Text,
-  ActivityIndicator,
-  TouchableWithoutFeedback,
-  Animated,
-} from 'react-native';
+import React from 'react';
+import { View, StyleSheet, Dimensions, Text, ActivityIndicator } from 'react-native';
 import Video, { OnProgressData, OnLoadData, LoadError, OnSeekData } from 'react-native-video';
-import { ItemControls } from './ItemControls';
+import { ItemControls, EItemControlsShow } from './ItemControls';
+import { DoubleTap } from './DoubleTap';
 
 export enum EItemType {
   Video,
@@ -39,149 +32,125 @@ interface IProps {
   onNextSlide: () => void;
 }
 
+interface IState {
+  loading: boolean;
+  paused: boolean;
+  seek: number;
+  muted: boolean;
+  infoShow: EItemControlsShow;
+}
+
 const { width, height } = Dimensions.get('window');
 
-export const Item: FC<IProps> = props => {
-  const [loading, setLoading] = useState(true);
-  const [paused, setPaused] = useState(false);
-  const [seek, setSeek] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [muted, setMuted] = useState(true);
-  const [info, setInfo] = useState(false);
-  const [infoAnimated, setInfoAnimated] = useState(new Animated.Value(0));
+export class Item extends React.Component<IProps, IState> {
+  state = {
+    loading: true,
+    paused: false,
+    seek: 0,
+    muted: true,
+    infoShow: EItemControlsShow.Crop,
+  };
 
-  let player: Video | null = null;
+  player: Video | null = null;
 
-  useEffect(() => {
-    setLoading(true);
-  }, []);
+  componentDidMount() {
+    if (this.player) {
+      this.player.seek(0);
+    }
+  }
 
-  const replay = () => {
-    if (player) {
-      player.seek(0);
+  replay = () => {};
+
+  handleReadyForDisplay = () => {
+    this.replay();
+  };
+
+  handleOnSeek = (e: OnSeekData) => {};
+
+  handleOnProgress = (e: OnProgressData) => {
+    this.setState({ loading: false });
+    this.setState({ seek: Math.round((e.currentTime / e.seekableDuration) * 100) });
+  };
+
+  handleEnd = () => {
+    this.setState({ paused: false });
+    this.replay();
+    this.props.onNextSlide();
+  };
+
+  handleOnLoad = (e: OnLoadData) => {};
+
+  setAllControlsVisible = () => {
+    if (this.state.infoShow === EItemControlsShow.Crop) {
+      this.setState({ infoShow: EItemControlsShow.Full });
+    } else {
+      this.setState({ infoShow: EItemControlsShow.Crop });
     }
   };
 
-  const handleReadyForDisplay = () => {
-    replay();
+  handleDoublePress = () => {
+    this.setAllControlsVisible();
   };
 
-  const handleOnSeek = (e: OnSeekData) => {};
-
-  const handleOnProgress = (e: OnProgressData) => {
-    setLoading(false);
-
-    const seekPercent = Math.round((e.currentTime / e.seekableDuration) * 100);
-
-    setSeek(seekPercent);
+  handlePressIn = () => {
+    this.setState({ paused: true });
   };
 
-  const handleSetRef = (ref: Video) => {
-    player = ref;
+  handlePressOut = () => {
+    this.setState({ paused: false });
   };
 
-  const handleEnd = () => {
-    setPaused(true);
-    replay();
-    props.onNextSlide();
-  };
+  handleOnError = (e: LoadError) => {};
 
-  const handleOnLoad = (e: OnLoadData) => {
-    setDuration(e.duration);
-  };
+  render() {
+    const { current, scrolling, item } = this.props;
+    const { loading, paused, muted, seek, infoShow } = this.state;
 
-  const handleViewPressIn = () => {
-    setPaused(true);
+    if (current || (scrolling && !current)) {
+      return (
+        <View style={styles.root}>
+          {loading && (
+            <View style={styles.loading}>
+              <ActivityIndicator color={'#fff'} size='large' />
+            </View>
+          )}
 
-    Animated.spring(infoAnimated, {
-      toValue: 1,
-      mass: 0.06,
-      damping: 350,
-      stiffness: 40,
-      useNativeDriver: true,
-    }).start();
-  };
+          {muted && (
+            <View style={styles.loading}>
+              <Text>Muted</Text>
+            </View>
+          )}
 
-  const handleViewPressOut = () => {
-    setPaused(false);
+          <DoubleTap
+            onDoubleTap={this.handleDoublePress}
+            handlePressIn={this.handlePressIn}
+            handlePressOut={this.handlePressOut}
+          >
+            <Video
+              muted={muted}
+              paused={paused || !current}
+              source={{ uri: item.source }}
+              playInBackground={false}
+              resizeMode='contain'
+              onReadyForDisplay={this.handleReadyForDisplay}
+              onProgress={this.handleOnProgress}
+              ref={ref => (this.player = ref)}
+              onEnd={this.handleEnd}
+              onSeek={this.handleOnSeek}
+              onLoad={this.handleOnLoad}
+              onError={this.handleOnError}
+              style={styles.backgroundVideo}
+            />
+          </DoubleTap>
 
-    Animated.spring(infoAnimated, {
-      toValue: 0,
-      mass: 0.06,
-      damping: 350,
-      stiffness: 40,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleViewLongPress = () => {
-    // setMuted(!muted);
-  };
-
-  const handleOnError = (e: LoadError) => {};
-
-  if (props.current || (props.scrolling && !props.current)) {
-    return (
-      <View style={styles.root}>
-        {loading && (
-          <View style={styles.loading}>
-            <ActivityIndicator color={'#fff'} size='large' />
-          </View>
-        )}
-
-        {muted && (
-          <View style={styles.loading}>
-            <Text>Muted</Text>
-          </View>
-        )}
-
-        <TouchableWithoutFeedback
-          onPressOut={handleViewPressOut}
-          onPressIn={handleViewPressIn}
-          onLongPress={handleViewLongPress}
-        >
-          <View style={styles.backgroundVideo} />
-          {/* <Video
-            muted={muted}
-            paused={paused || !props.current}
-            source={{ uri: props.item.source }}
-            playInBackground={false}
-            resizeMode='cover'
-            onReadyForDisplay={handleReadyForDisplay}
-            onProgress={handleOnProgress}
-            ref={handleSetRef}
-            onEnd={handleEnd}
-            onSeek={handleOnSeek}
-            onLoad={handleOnLoad}
-            onError={handleOnError}
-            style={styles.backgroundVideo}
-          /> */}
-        </TouchableWithoutFeedback>
-
-        <Animated.View
-          style={[
-            styles.controls,
-            {
-              // opacity: infoAnimated,
-              transform: [
-                {
-                  translateY: infoAnimated.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [190, 0],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
-          <ItemControls current={props.current} seek={seek} item={props.item} />
-        </Animated.View>
-      </View>
-    );
-  } else {
-    return <View style={styles.root} />;
+          <ItemControls show={infoShow} current={current} seek={seek} item={item} />
+        </View>
+      );
+    } else {
+      return <View style={styles.root} />;
+    }
   }
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -211,13 +180,6 @@ const styles = StyleSheet.create({
       },
     ],
     zIndex: 200,
-  },
-
-  controls: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    zIndex: 300,
   },
 
   backgroundVideo: {

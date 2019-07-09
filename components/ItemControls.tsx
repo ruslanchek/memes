@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,107 +8,191 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Alert,
-  TouchableHighlight,
+  Animated,
 } from 'react-native';
 import { IItem } from './Item';
-import { BlurView } from '@react-native-community/blur';
-import { Appear } from '../Appear';
 import LinearGradient from 'react-native-linear-gradient';
+import { Appear } from '../Appear';
+import Icon from 'react-native-vector-icons/Feather';
 
-const { width, height } = Dimensions.get('window');
-
+const { width } = Dimensions.get('window');
 const SEEK_BAR_HEIGHT = 4;
+
+export enum EItemControlsShow {
+  Full,
+  Crop,
+  Off,
+}
 
 interface IProps {
   item: IItem;
   seek: number;
+  muted: boolean;
   current: boolean;
+  show: EItemControlsShow;
+  onMutePress: () => void;
 }
 
-export const ItemControls: FC<IProps> = props => {
-  return (
-    <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,.9)']}>
-      <SafeAreaView>
-        <View style={styles.root}>
-          <View style={styles.seekBar}>
-            <View style={[styles.seekBarFiller, { width: `${props.seek}%` }]}>
-              <View style={styles.seekBarKnob} />
-            </View>
+interface IState {
+  infoAnimated: Animated.Value;
+  controlsVisible: boolean;
+}
+
+export class ItemControls extends React.Component<IProps, IState> {
+  state = {
+    infoAnimated: new Animated.Value(0),
+    controlsVisible: false,
+  };
+
+  componentWillReceiveProps(nextProps: IProps) {
+    if (nextProps.show !== this.props.show) {
+      let infoAnimatedToValue = null;
+      let controlsVisible = false;
+
+      switch (nextProps.show) {
+        case EItemControlsShow.Crop: {
+          infoAnimatedToValue = 0.33;
+          controlsVisible = false;
+          break;
+        }
+
+        case EItemControlsShow.Full: {
+          infoAnimatedToValue = 1;
+          controlsVisible = true;
+          break;
+        }
+
+        case EItemControlsShow.Off:
+        default: {
+          infoAnimatedToValue = 0;
+          controlsVisible = false;
+          break;
+        }
+      }
+
+      Animated.spring(this.state.infoAnimated, {
+        toValue: infoAnimatedToValue,
+        mass: 0.06,
+        damping: 350,
+        stiffness: 40,
+        useNativeDriver: true,
+      }).start();
+
+      this.setState({ controlsVisible });
+    }
+  }
+
+  render() {
+    const { item, seek, show, muted, onMutePress } = this.props;
+    const { infoAnimated, controlsVisible } = this.state;
+
+    return (
+      <Animated.View
+        style={[
+          styles.controls,
+          {
+            // opacity: infoAnimated,
+            transform: [
+              {
+                translateY: infoAnimated.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [220, 0],
+                }),
+              },
+            ],
+          },
+        ]}
+      >
+        <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,.9)']}>
+          <View style={styles.mute}>
+            <Icon name='volume' size={30} color='#fff' />
           </View>
 
-          <View style={styles.titles}>
-            <Text style={styles.title}>{props.item.title}</Text>
-            <Text style={styles.subtitle}>{props.item.subtitle}</Text>
-          </View>
-
-          <View style={styles.stats}>
-            <View style={styles.statsLeft}>
-              <Text style={styles.statsText}>Views </Text>
-              <Text style={styles.statsHighlighted}>{props.item.views}</Text>
-              <View style={styles.statsDivider} />
-              <Text style={styles.statsText}>Points </Text>
-              <Text style={styles.statsHighlighted}>{props.item.points}</Text>
-            </View>
-
-            <View style={styles.statsRight}>
-              <Text style={styles.statsHighlighted}>By </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  Alert.alert(props.item.by.id);
-                }}
-              >
-                <Text style={styles.statsUser}>@{props.item.by.name}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <ScrollView
-            contentContainerStyle={styles.categoriesScrollViewContainer}
-            horizontal
-            onMoveShouldSetResponder={() => true}
-          >
-            <TouchableOpacity>
-              <View style={styles.category}>
-                <Text style={styles.categoryIcon}>😀</Text>
-                <Text style={styles.categoryName}>Memes</Text>
+          <SafeAreaView>
+            <View style={styles.root}>
+              <View style={styles.seekBar}>
+                <View style={[styles.seekBarFiller, { width: `${seek}%` }]}>
+                  <View style={styles.seekBarKnob} />
+                </View>
               </View>
-            </TouchableOpacity>
 
-            <View style={styles.category}>
-              <Text style={styles.categoryIcon}>💅</Text>
-              <Text style={styles.categoryName}>Beauty</Text>
-            </View>
+              <View style={styles.titles}>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.subtitle}>{item.subtitle}</Text>
+              </View>
 
-            <View style={styles.category}>
-              <Text style={styles.categoryIcon}>🐈</Text>
-              <Text style={styles.categoryName}>Animals</Text>
-            </View>
+              <Appear type='soarUp' delay={50} show={controlsVisible} customStyles={styles.stats}>
+                <View style={styles.statsLeft}>
+                  <Text style={styles.statsText}>Views </Text>
+                  <Text style={styles.statsHighlighted}>{item.views}</Text>
+                  <View style={styles.statsDivider} />
+                  <Text style={styles.statsText}>Points </Text>
+                  <Text style={styles.statsHighlighted}>{item.points}</Text>
+                </View>
 
-            <View style={styles.category}>
-              <Text style={styles.categoryIcon}>🚀</Text>
-              <Text style={styles.categoryName}>Space</Text>
-            </View>
+                <View style={styles.statsRight}>
+                  <Text style={styles.statsHighlighted}>By </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      Alert.alert(item.by.id);
+                    }}
+                  >
+                    <Text style={styles.statsUser}>@{item.by.name}</Text>
+                  </TouchableOpacity>
+                </View>
+              </Appear>
 
-            <View style={styles.category}>
-              <Text style={styles.categoryIcon}>🥳</Text>
-              <Text style={styles.categoryName}>Parties</Text>
-            </View>
+              <Appear type='soarUp' delay={125} show={controlsVisible}>
+                <ScrollView
+                  contentContainerStyle={styles.categoriesScrollViewContainer}
+                  horizontal
+                  onMoveShouldSetResponder={() => true}
+                >
+                  <TouchableOpacity>
+                    <View style={styles.category}>
+                      <Text style={styles.categoryIcon}>😀</Text>
+                      <Text style={styles.categoryName}>Memes</Text>
+                    </View>
+                  </TouchableOpacity>
 
-            <View style={styles.category}>
-              <Text style={styles.categoryIcon}>❤️</Text>
-              <Text style={styles.categoryName}>Love</Text>
-            </View>
+                  <View style={styles.category}>
+                    <Text style={styles.categoryIcon}>💅</Text>
+                    <Text style={styles.categoryName}>Beauty</Text>
+                  </View>
 
-            <View style={styles.category}>
-              <Text style={styles.categoryIcon}>🚘</Text>
-              <Text style={styles.categoryName}>Cars</Text>
+                  <View style={styles.category}>
+                    <Text style={styles.categoryIcon}>🐈</Text>
+                    <Text style={styles.categoryName}>Animals</Text>
+                  </View>
+
+                  <View style={styles.category}>
+                    <Text style={styles.categoryIcon}>🚀</Text>
+                    <Text style={styles.categoryName}>Space</Text>
+                  </View>
+
+                  <View style={styles.category}>
+                    <Text style={styles.categoryIcon}>🥳</Text>
+                    <Text style={styles.categoryName}>Parties</Text>
+                  </View>
+
+                  <View style={styles.category}>
+                    <Text style={styles.categoryIcon}>❤️</Text>
+                    <Text style={styles.categoryName}>Love</Text>
+                  </View>
+
+                  <View style={styles.category}>
+                    <Text style={styles.categoryIcon}>🚘</Text>
+                    <Text style={styles.categoryName}>Cars</Text>
+                  </View>
+                </ScrollView>
+              </Appear>
             </View>
-          </ScrollView>
-        </View>
-      </SafeAreaView>
-    </LinearGradient>
-  );
-};
+          </SafeAreaView>
+        </LinearGradient>
+      </Animated.View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -118,9 +202,23 @@ const styles = StyleSheet.create({
 
   blur: {},
 
+  mute: {
+    position: 'absolute',
+    backgroundColor: 'rgba(255, 255, 255, .1)',
+    top: -30,
+    left: 0,
+  },
+
+  controls: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    zIndex: 300,
+  },
+
   titles: {
     paddingHorizontal: 20,
-    paddingTop: 15,
+    marginTop: 10,
   },
 
   title: {
@@ -136,8 +234,8 @@ const styles = StyleSheet.create({
 
   stats: {
     paddingHorizontal: 20,
-    paddingTop: 15,
-    marginBottom: 20,
+    marginTop: 15,
+    marginBottom: 15,
     flexDirection: 'row',
   },
 
@@ -172,7 +270,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, .2)',
     borderRadius: SEEK_BAR_HEIGHT / 2,
     marginHorizontal: 20,
-    marginTop: 20,
+    marginTop: 15,
   },
 
   seekBarFiller: {

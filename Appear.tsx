@@ -1,7 +1,7 @@
 import React from 'react';
 import { Animated, StyleSheet } from 'react-native';
 
-export type TAppearType = 'spring' | 'fade' | 'drop';
+export type TAppearType = 'spring' | 'fade' | 'drop' | 'soarUp';
 
 interface IProps {
   show: boolean;
@@ -58,6 +58,18 @@ export class Appear extends React.Component<IProps, IState> {
         break;
       }
 
+      case 'soarUp': {
+        Animated.spring(this.state.animated, {
+          toValue: 1,
+          delay: this.delay,
+          mass: 1,
+          stiffness: 200,
+          damping: 20,
+          useNativeDriver: true,
+        }).start();
+        break;
+      }
+
       case 'spring':
       case 'drop':
       default: {
@@ -78,6 +90,19 @@ export class Appear extends React.Component<IProps, IState> {
         Animated.timing(this.state.animated, {
           toValue: 0,
           duration: 200,
+          delay: this.delay,
+          useNativeDriver: true,
+        }).start();
+        break;
+      }
+
+      case 'soarUp': {
+        Animated.spring(this.state.animated, {
+          toValue: 0,
+          delay: this.delay,
+          mass: 1,
+          stiffness: 200,
+          damping: 20,
           useNativeDriver: true,
         }).start();
         break;
@@ -89,9 +114,39 @@ export class Appear extends React.Component<IProps, IState> {
         Animated.spring(this.state.animated, {
           toValue: 0,
           tension: 92,
+          delay: this.delay,
           useNativeDriver: true,
         }).start();
         break;
+      }
+    }
+  }
+
+  get transformInterpolation() {
+    const { animated } = this.state;
+    const { type } = this.props;
+
+    switch (type) {
+      case 'drop': {
+        return [
+          {
+            translateY: animated.interpolate({
+              inputRange: [0, 1],
+              outputRange: [-10, 0],
+            }),
+          },
+        ];
+      }
+
+      default: {
+        return [
+          {
+            scale: animated.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0.8, 1],
+            }),
+          },
+        ];
       }
     }
   }
@@ -107,21 +162,7 @@ export class Appear extends React.Component<IProps, IState> {
           customStyles,
           {
             opacity: animated,
-            transform: [
-              type === 'drop'
-                ? {
-                    translateY: animated.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [-10, 0],
-                    }),
-                  }
-                : {
-                    scale: animated.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0.8, 1],
-                    }),
-                  },
-            ],
+            transform: this.transformInterpolation,
           },
         ]}
       >

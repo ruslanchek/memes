@@ -78,6 +78,8 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
+  - RNVectorIcons (6.6.0):
+    - React
   - yoga (0.59.9.React)
 
 DEPENDENCIES:
@@ -108,6 +110,7 @@ DEPENDENCIES:
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -131,6 +134,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/blur"
   react-native-video:
     :path: "../node_modules/react-native-video/react-native-video.podspec"
+  RNVectorIcons:
+    :path: "../node_modules/react-native-vector-icons"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -145,8 +150,9 @@ SPEC CHECKSUMS:
   React: a86b92f00edbe1873a63e4a212c29b7a7ad5224f
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
   react-native-video: 481d46031d2a55c2b6fa8aaa9e9ad4a9b215aca5
+  RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: 511acbcf5d59808896eb460d964c42c913db3701
+PODFILE CHECKSUM: 936d5c3e3dac9d3511d39c9b88cb6b34beedc079
 
 COCOAPODS: 1.6.1

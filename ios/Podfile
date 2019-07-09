@@ -44,4 +44,6 @@ target "memes" do
   pod "react-native-video", :path => "../node_modules/react-native-video/react-native-video.podspec"
   pod "react-native-blur", :path => "../node_modules/@react-native-community/blur"
   pod "BVLinearGradient", :path => "../node_modules/react-native-linear-gradient"
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
 end
