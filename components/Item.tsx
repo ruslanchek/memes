@@ -12,6 +12,7 @@ export enum EItemType {
 export interface IItem {
   id: number;
   source: string;
+  poster: string;
   type: EItemType;
   title: string;
   subtitle: string;
@@ -102,6 +103,10 @@ export class Item extends React.Component<IProps, IState> {
 
   handleOnError = (e: LoadError) => {};
 
+  handleMuted = () => {
+    this.setState({ muted: !this.state.muted });
+  };
+
   render() {
     const { current, scrolling, item } = this.props;
     const { loading, paused, muted, seek, infoShow } = this.state;
@@ -128,10 +133,12 @@ export class Item extends React.Component<IProps, IState> {
           >
             <Video
               muted={muted}
+              poster={item.poster}
               paused={paused || !current}
               source={{ uri: item.source }}
               playInBackground={false}
               resizeMode='contain'
+              posterResizeMode='contain'
               onReadyForDisplay={this.handleReadyForDisplay}
               onProgress={this.handleOnProgress}
               ref={ref => (this.player = ref)}
@@ -143,7 +150,14 @@ export class Item extends React.Component<IProps, IState> {
             />
           </DoubleTap>
 
-          <ItemControls show={infoShow} current={current} seek={seek} item={item} />
+          <ItemControls
+            show={infoShow}
+            current={current}
+            seek={seek}
+            item={item}
+            muted={muted}
+            onMutePress={this.handleMuted}
+          />
         </View>
       );
     } else {

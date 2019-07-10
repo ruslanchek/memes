@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { IItem } from './Item';
 import LinearGradient from 'react-native-linear-gradient';
-import { Appear } from '../Appear';
+import { Appear } from './Appear';
 import Icon from 'react-native-vector-icons/Feather';
 
 const { width } = Dimensions.get('window');
@@ -40,7 +40,7 @@ interface IState {
 
 export class ItemControls extends React.Component<IProps, IState> {
   state = {
-    infoAnimated: new Animated.Value(0),
+    infoAnimated: new Animated.Value(0.35),
     controlsVisible: false,
   };
 
@@ -51,13 +51,13 @@ export class ItemControls extends React.Component<IProps, IState> {
 
       switch (nextProps.show) {
         case EItemControlsShow.Crop: {
-          infoAnimatedToValue = 0.33;
+          infoAnimatedToValue = 0.35;
           controlsVisible = false;
           break;
         }
 
         case EItemControlsShow.Full: {
-          infoAnimatedToValue = 1;
+          infoAnimatedToValue = 0.9;
           controlsVisible = true;
           break;
         }
@@ -72,9 +72,8 @@ export class ItemControls extends React.Component<IProps, IState> {
 
       Animated.spring(this.state.infoAnimated, {
         toValue: infoAnimatedToValue,
-        mass: 0.06,
-        damping: 350,
-        stiffness: 40,
+        tension: 120,
+        friction: 20,
         useNativeDriver: true,
       }).start();
 
@@ -96,7 +95,7 @@ export class ItemControls extends React.Component<IProps, IState> {
               {
                 translateY: infoAnimated.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [220, 0],
+                  outputRange: [200, 0],
                 }),
               },
             ],
@@ -121,7 +120,7 @@ export class ItemControls extends React.Component<IProps, IState> {
                 <Text style={styles.subtitle}>{item.subtitle}</Text>
               </View>
 
-              <Appear type='soarUp' delay={50} show={controlsVisible} customStyles={styles.stats}>
+              <Appear type='fade' delay={0} show={controlsVisible} customStyles={styles.stats}>
                 <View style={styles.statsLeft}>
                   <Text style={styles.statsText}>Views </Text>
                   <Text style={styles.statsHighlighted}>{item.views}</Text>
@@ -142,7 +141,7 @@ export class ItemControls extends React.Component<IProps, IState> {
                 </View>
               </Appear>
 
-              <Appear type='soarUp' delay={125} show={controlsVisible}>
+              <Appear type='fade' delay={100} show={controlsVisible}>
                 <ScrollView
                   contentContainerStyle={styles.categoriesScrollViewContainer}
                   horizontal
@@ -197,7 +196,7 @@ export class ItemControls extends React.Component<IProps, IState> {
 const styles = StyleSheet.create({
   root: {
     width,
-    height: 200,
+    height: 220,
   },
 
   blur: {},

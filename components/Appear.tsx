@@ -3,7 +3,7 @@ import { Animated, StyleSheet } from 'react-native';
 
 interface IProps {
   show: boolean;
-  type: 'spring' | 'fade' | 'drop';
+  type: 'spring' | 'fade' | 'drop' | 'soarUp';
   customStyles?: any;
   isReverse?: boolean;
   delay?: number;
@@ -11,6 +11,7 @@ interface IProps {
 
 interface IState {
   animated: Animated.Value;
+  dismount: boolean;
 }
 
 export class Appear extends React.Component<IProps, IState> {
@@ -50,12 +51,26 @@ export class Appear extends React.Component<IProps, IState> {
   }
 
   in() {
+    this.setMounted();
+
     switch (this.props.type) {
       case 'fade': {
         Animated.timing(this.state.animated, {
           toValue: 1,
           delay: this.delay,
-          duration: 200,
+          duration: 180,
+          useNativeDriver: true,
+        }).start();
+        break;
+      }
+
+      case 'soarUp': {
+        Animated.spring(this.state.animated, {
+          toValue: 1,
+          delay: this.delay,
+          mass: 1,
+          stiffness: 200,
+          damping: 20,
           useNativeDriver: true,
         }).start();
         break;
@@ -80,9 +95,21 @@ export class Appear extends React.Component<IProps, IState> {
       case 'fade': {
         Animated.timing(this.state.animated, {
           toValue: 0,
-          duration: 200,
+          duration: 180,
           useNativeDriver: true,
-        }).start();
+        }).start(this.setUnmounted);
+        break;
+      }
+
+      case 'soarUp': {
+        Animated.spring(this.state.animated, {
+          toValue: 0,
+          delay: this.delay,
+          mass: 1,
+          stiffness: 200,
+          damping: 20,
+          useNativeDriver: true,
+        }).start(this.setUnmounted);
         break;
       }
 
@@ -93,15 +120,66 @@ export class Appear extends React.Component<IProps, IState> {
           toValue: 0,
           tension: 92,
           useNativeDriver: true,
-        }).start();
+        }).start(this.setUnmounted);
         break;
       }
     }
   }
 
+  setMounted = () => {
+    this.setState({
+      dismount: false,
+    });
+  };
+
+  setUnmounted = () => {
+    this.setState({
+      dismount: true,
+    });
+  };
+
+  get transform() {
+    switch (this.props.type) {
+      case 'drop': {
+        return {
+          translateY: this.state.animated.interpolate({
+            inputRange: [0, 1],
+            outputRange: [-10, 0],
+          }),
+        };
+      }
+
+      case 'soarUp': {
+        return [
+          {
+            translateY: this.state.animated.interpolate({
+              inputRange: [0, 1],
+              outputRange: [20, 0],
+            }),
+          },
+        ];
+      }
+
+      default: {
+        return [
+          {
+            scale: this.state.animated.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0.95, 1],
+            }),
+          },
+        ];
+      }
+    }
+  }
+
   render() {
-    const { animated } = this.state;
+    const { animated, dismount } = this.state;
     const { customStyles, children, type } = this.props;
+
+    if (dismount) {
+      return null;
+    }
 
     return (
       <Animated.View
@@ -110,21 +188,7 @@ export class Appear extends React.Component<IProps, IState> {
           customStyles,
           {
             opacity: animated,
-            transform: [
-              type === 'drop'
-                ? {
-                    translateY: animated.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [-10, 0],
-                    }),
-                  }
-                : {
-                    scale: animated.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0.8, 1],
-                    }),
-                  },
-            ],
+            transform: this.transform,
           },
         ]}
       >

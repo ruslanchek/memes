@@ -13,8 +13,8 @@ interface IState {
 const DATA: IItem[] = [
   {
     id: 1,
-    source:
-      'https://s2.content.video.llnw.net/smedia/42f4e71183054396907c0dea18241568/yd/yLpoUEilVrxhhYSkpsyGMnn9t0N3AYxWmoMsM7Faw/francstireurs_entrevue_ep472_seq24.mpegts/playlist-de5cb50573ac3952cd031f64973a614828771406.m3u8',
+    source: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/1/1.mp4',
+    poster: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/1/1.jpg',
     type: EItemType.Video,
     title: 'Strange Rain',
     subtitle: 'Strange rain on the road in China',
@@ -29,8 +29,8 @@ const DATA: IItem[] = [
 
   {
     id: 2,
-    source:
-      'https://s2.content.video.llnw.net/smedia/42f4e71183054396907c0dea18241568/yd/yLpoUEilVrxhhYSkpsyGMnn9t0N3AYxWmoMsM7Faw/francstireurs_entrevue_ep472_seq24.mpegts/playlist-de5cb50573ac3952cd031f64973a614828771406.m3u8',
+    source: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/2/2.mp4',
+    poster: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/2/2.jpg',
     type: EItemType.Video,
     title: 'Strange Rain',
     subtitle: 'Strange rain on the road in China',
@@ -45,8 +45,8 @@ const DATA: IItem[] = [
 
   {
     id: 3,
-    source:
-      'https://s2.content.video.llnw.net/smedia/42f4e71183054396907c0dea18241568/yd/yLpoUEilVrxhhYSkpsyGMnn9t0N3AYxWmoMsM7Faw/francstireurs_entrevue_ep472_seq24.mpegts/playlist-de5cb50573ac3952cd031f64973a614828771406.m3u8',
+    source: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/3/3.mp4',
+    poster: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/3/3.jpg',
     type: EItemType.Video,
     title: 'Strange Rain',
     subtitle: 'Strange rain on the road in China',
@@ -61,8 +61,8 @@ const DATA: IItem[] = [
 
   {
     id: 4,
-    source:
-      'https://s2.content.video.llnw.net/smedia/42f4e71183054396907c0dea18241568/yd/yLpoUEilVrxhhYSkpsyGMnn9t0N3AYxWmoMsM7Faw/francstireurs_entrevue_ep472_seq24.mpegts/playlist-de5cb50573ac3952cd031f64973a614828771406.m3u8',
+    source: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/4/4.mp4',
+    poster: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/4/4.jpg',
     type: EItemType.Video,
     title: 'Strange Rain',
     subtitle: 'Strange rain on the road in China',
@@ -77,7 +77,8 @@ const DATA: IItem[] = [
 
   {
     id: 5,
-    source: 'https://i.imgur.com/SsCrymL.mp4',
+    source: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/5/5.mp4',
+    poster: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/5/5.jpg',
     type: EItemType.Video,
     title: 'Strange Rain',
     subtitle: 'Strange rain on the road in China',
@@ -92,7 +93,40 @@ const DATA: IItem[] = [
 
   {
     id: 6,
-    source: 'https://i.imgur.com/JjMay6m.mp4',
+    source: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/6/6.mp4',
+    poster: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/6/6.jpg',
+    type: EItemType.Video,
+    title: 'Strange Rain',
+    subtitle: 'Strange rain on the road in China',
+    liked: false,
+    by: {
+      name: 'kbowser',
+      id: '14432dsd3409dfsj3lk24n1k29098cx82',
+    },
+    views: 4503,
+    points: 48,
+  },
+
+  {
+    id: 7,
+    source: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/7/7.mp4',
+    poster: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/7/7.jpg',
+    type: EItemType.Video,
+    title: 'Strange Rain',
+    subtitle: 'Strange rain on the road in China',
+    liked: false,
+    by: {
+      name: 'kbowser',
+      id: '14432dsd3409dfsj3lk24n1k29098cx82',
+    },
+    views: 4503,
+    points: 48,
+  },
+
+  {
+    id: 8,
+    source: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/8/8.mp4',
+    poster: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/8/8.jpg',
     type: EItemType.Video,
     title: 'Strange Rain',
     subtitle: 'Strange rain on the road in China',
