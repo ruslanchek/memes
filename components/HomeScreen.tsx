@@ -1,5 +1,13 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, FlatList, Text, ViewToken } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Text,
+  ViewToken,
+  Dimensions,
+  NativeScrollEvent,
+} from 'react-native';
 import { Item, IItem, EItemType } from './Item';
 import { ItemControls, EItemControlsShow } from './ItemControls';
 import { DoubleTap } from './DoubleTap';
@@ -200,11 +208,21 @@ export class HomeScreen extends Component<IProps, IState> {
     const currentItem = info.viewableItems[0];
 
     if (currentItem && currentItem.index! >= 0) {
-      this.setState({
-        currentItemIndex: currentItem.index!,
-        currentItemData: DATA[currentItem.index!],
-        isScrolling: currentItem.isViewable! ? true : false,
-      });
+      this.setState(
+        {
+          currentItemIndex: currentItem.index!,
+          currentItemData: DATA[currentItem.index!],
+          isScrolling: currentItem.isViewable! ? true : false,
+        },
+        () => {
+          if (this.list && this.state.currentItemIndex) {
+            this.list.scrollToIndex({
+              animated: false,
+              index: 1,
+            });
+          }
+        },
+      );
     }
   };
 
@@ -243,6 +261,24 @@ export class HomeScreen extends Component<IProps, IState> {
     this.setState({ currentSeek: percent });
   };
 
+  handleScroll = (e: any) => {
+    console.log(e);
+  };
+
+  get data(): IItem[] {
+    let start = this.state.currentItemIndex - 1;
+
+    if (start < 0) {
+      start = 0;
+    }
+
+    let end = start + 3;
+
+    console.log('laakelog', start, end);
+
+    return DATA.slice(start, 3);
+  }
+
   render() {
     const {
       currentItemIndex,
@@ -253,6 +289,8 @@ export class HomeScreen extends Component<IProps, IState> {
       infoShow,
       currentItemData,
     } = this.state;
+
+    const { width, height } = Dimensions.get('window');
 
     return (
       <VideoContext.Provider
@@ -273,10 +311,11 @@ export class HomeScreen extends Component<IProps, IState> {
         <View style={styles.root}>
           <FlatList<IItem>
             ref={ref => (this.list = ref)}
-            data={DATA}
+            data={this.data}
             initialNumToRender={3}
-            maxToRenderPerBatch={1}
+            maxToRenderPerBatch={3}
             windowSize={3}
+            // onScroll={this.handleScroll}
             horizontal
             pagingEnabled
             initialScrollIndex={currentItemIndex}
@@ -289,21 +328,41 @@ export class HomeScreen extends Component<IProps, IState> {
             keyExtractor={(item, index) => {
               return item.id.toString();
             }}
+            getItemLayout={(data, index) => ({
+              length: width,
+              offset: width * index,
+              index,
+            })}
             onScrollToIndexFailed={() => {}}
             renderItem={data => {
-              return <Item item={data.item} index={data.index} />;
+              // return <Item item={data.item} index={data.index} />;
+              return (
+                <View
+                  style={{
+                    width,
+                    height,
+                    backgroundColor: 'gray',
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text>Index: {data.index}</Text>
+                  <Text>Data id: {data.item.id}</Text>
+                </View>
+              );
             }}
             viewabilityConfig={viewabilityConfig}
             onViewableItemsChanged={this.handleViewableItemsChanged}
           />
 
-          <ItemControls
+          {/* <ItemControls
             show={infoShow}
             seek={this.state.currentSeek}
             item={this.state.currentItemData}
             muted={this.state.isMuted}
             onMutePress={this.handleSetMuted}
-          />
+          /> */}
         </View>
         {/* </DoubleTap> */}
       </VideoContext.Provider>
