@@ -137,8 +137,8 @@ export class Item extends React.Component<IProps, IState> {
               paused={paused || !current}
               source={{ uri: item.source }}
               playInBackground={false}
-              resizeMode='contain'
-              posterResizeMode='contain'
+              resizeMode='cover'
+              posterResizeMode='cover'
               onReadyForDisplay={this.handleReadyForDisplay}
               onProgress={this.handleOnProgress}
               ref={ref => (this.player = ref)}

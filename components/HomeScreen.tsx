@@ -172,9 +172,12 @@ export class HomeScreen extends Component<IProps, IState> {
   loadMoreData() {}
 
   handleNextSlide = () => {
-    this.setState({
-      currentItemIndex: this.state.currentItemIndex + 1,
-    });
+    if (this.list) {
+      this.list.scrollToIndex({
+        index: this.state.currentItemIndex + 1,
+        animated: true,
+      });
+    }
   };
 
   render() {
@@ -186,7 +189,7 @@ export class HomeScreen extends Component<IProps, IState> {
           ref={ref => (this.list = ref)}
           data={DATA}
           initialNumToRender={3}
-          maxToRenderPerBatch={3}
+          maxToRenderPerBatch={1}
           windowSize={3}
           horizontal
           pagingEnabled
@@ -200,6 +203,7 @@ export class HomeScreen extends Component<IProps, IState> {
           keyExtractor={(item, index) => {
             return item.id.toString();
           }}
+          onScrollToIndexFailed={() => {}}
           renderItem={data => {
             return (
               <Item

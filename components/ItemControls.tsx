@@ -102,11 +102,13 @@ export class ItemControls extends React.Component<IProps, IState> {
           },
         ]}
       >
-        <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,.9)']}>
+        <TouchableOpacity onPress={onMutePress}>
           <View style={styles.mute}>
-            <Icon name='volume' size={30} color='#fff' />
+            <Icon name={muted ? 'volume-x' : 'volume-2'} size={28} color='#fff' />
           </View>
+        </TouchableOpacity>
 
+        <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,.9)']}>
           <SafeAreaView>
             <View style={styles.root}>
               <View style={styles.seekBar}>
@@ -203,9 +205,13 @@ const styles = StyleSheet.create({
 
   mute: {
     position: 'absolute',
-    backgroundColor: 'rgba(255, 255, 255, .1)',
-    top: -30,
-    left: 0,
+    top: -28,
+    left: 20,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   controls: {
