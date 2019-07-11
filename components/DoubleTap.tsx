@@ -5,8 +5,8 @@ const DOUBLE_PRESS_DELAY = 300;
 
 interface IProps {
   onDoubleTap: () => void;
-  handlePressOut: () => void;
-  handlePressIn: () => void;
+  handlePressOut?: () => void;
+  handlePressIn?: () => void;
 }
 
 export const DoubleTap: React.FC<IProps> = props => {
@@ -19,12 +19,15 @@ export const DoubleTap: React.FC<IProps> = props => {
       props.onDoubleTap();
     } else {
       setLastTap(now);
-      props.handlePressIn();
+      props.handlePressIn ? props.handlePressIn() : void 0;
     }
   };
 
   return (
-    <TouchableWithoutFeedback onPressOut={props.handlePressOut} onPressIn={handleDoubleTap}>
+    <TouchableWithoutFeedback
+      onPressOut={props.handlePressOut ? props.handlePressOut : void 0}
+      onPressIn={handleDoubleTap}
+    >
       {props.children}
     </TouchableWithoutFeedback>
   );

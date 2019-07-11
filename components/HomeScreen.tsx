@@ -1,13 +1,20 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, FlatList, Text, ViewToken } from 'react-native';
 import { Item, IItem, EItemType } from './Item';
+import { ItemControls, EItemControlsShow } from './ItemControls';
+import { DoubleTap } from './DoubleTap';
 
 interface IProps {}
 
 interface IState {
   currentItemIndex: number;
   offset: number;
-  scrolling: boolean;
+  isScrolling: boolean;
+  isLoading: boolean;
+  isMuted: boolean;
+  currentItemData: IItem | null;
+  currentSeek: number;
+  infoShow: EItemControlsShow;
 }
 
 const DATA: IItem[] = [
@@ -16,7 +23,7 @@ const DATA: IItem[] = [
     source: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/1/1.mp4',
     poster: 'https://xsnapp-cdn.fra1.cdn.digitaloceanspaces.com/tmp/1/1.jpg',
     type: EItemType.Video,
-    title: 'Strange Rain',
+    title: 'Nework and a Road',
     subtitle: 'Strange rain on the road in China',
     liked: false,
     by: {
@@ -146,11 +153,42 @@ const viewabilityConfig = {
   waitForInteraction: false,
 };
 
+export interface IVideoContext {
+  isLoading: boolean;
+  isMuted: boolean;
+  isScrolling: boolean;
+  currentItemData: IItem | null;
+  currentSeek: number;
+  currentItemIndex: number;
+  setLoading: (value: boolean) => void;
+  setMuted: (value: boolean) => void;
+  setCurrentSeek: (percent: number) => void;
+  onNextSlide: () => void;
+}
+
+export const VideoContext = React.createContext<IVideoContext>({
+  isLoading: true,
+  isMuted: true,
+  currentItemData: null,
+  currentSeek: 0,
+  currentItemIndex: 0,
+  isScrolling: false,
+  setLoading: () => {},
+  setMuted: () => {},
+  setCurrentSeek: () => {},
+  onNextSlide: () => {},
+});
+
 export class HomeScreen extends Component<IProps, IState> {
   state = {
     currentItemIndex: 0,
     offset: 0,
-    scrolling: false,
+    isScrolling: false,
+    isLoading: true,
+    isMuted: true,
+    currentItemData: null,
+    currentSeek: 0,
+    infoShow: EItemControlsShow.Crop,
   };
 
   list: FlatList<IItem> | null = null;
@@ -164,7 +202,8 @@ export class HomeScreen extends Component<IProps, IState> {
     if (currentItem && currentItem.index! >= 0) {
       this.setState({
         currentItemIndex: currentItem.index!,
-        scrolling: currentItem.isViewable! ? true : false,
+        currentItemData: DATA[currentItem.index!],
+        isScrolling: currentItem.isViewable! ? true : false,
       });
     }
   };
@@ -180,45 +219,94 @@ export class HomeScreen extends Component<IProps, IState> {
     }
   };
 
+  handleSetMuted = () => {
+    this.setState({ isMuted: !this.state.isMuted });
+  };
+
+  handleDoublePress = () => {
+    this.setAllControlsVisible();
+  };
+
+  setAllControlsVisible = () => {
+    if (this.state.infoShow === EItemControlsShow.Crop) {
+      this.setState({ infoShow: EItemControlsShow.Full });
+    } else {
+      this.setState({ infoShow: EItemControlsShow.Crop });
+    }
+  };
+
+  handleSetLoading = (value: boolean) => {
+    this.setState({ isLoading: value });
+  };
+
+  handleSetCurrentSeek = (percent: number) => {
+    this.setState({ currentSeek: percent });
+  };
+
   render() {
-    const { currentItemIndex, scrolling } = this.state;
+    const {
+      currentItemIndex,
+      currentSeek,
+      isMuted,
+      isLoading,
+      isScrolling,
+      infoShow,
+      currentItemData,
+    } = this.state;
 
     return (
-      <View style={styles.root}>
-        <FlatList<IItem>
-          ref={ref => (this.list = ref)}
-          data={DATA}
-          initialNumToRender={3}
-          maxToRenderPerBatch={1}
-          windowSize={3}
-          horizontal
-          pagingEnabled
-          initialScrollIndex={currentItemIndex}
-          style={styles.flatList}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.content}
-          onEndReached={this.loadMoreData}
-          onEndReachedThreshold={0.1}
-          keyExtractor={(item, index) => {
-            return item.id.toString();
-          }}
-          onScrollToIndexFailed={() => {}}
-          renderItem={data => {
-            return (
-              <Item
-                onNextSlide={this.handleNextSlide}
-                current={data.index === currentItemIndex}
-                scrolling={scrolling}
-                item={data.item}
-                index={data.index}
-              />
-            );
-          }}
-          viewabilityConfig={viewabilityConfig}
-          onViewableItemsChanged={this.handleViewableItemsChanged}
-        />
-      </View>
+      <VideoContext.Provider
+        value={{
+          isLoading,
+          isMuted,
+          isScrolling,
+          currentItemData,
+          currentSeek,
+          currentItemIndex,
+          setLoading: this.handleSetLoading,
+          setMuted: this.handleSetMuted,
+          setCurrentSeek: this.handleSetCurrentSeek,
+          onNextSlide: this.handleNextSlide,
+        }}
+      >
+        {/* <DoubleTap onDoubleTap={this.setAllControlsVisible}> */}
+        <View style={styles.root}>
+          <FlatList<IItem>
+            ref={ref => (this.list = ref)}
+            data={DATA}
+            initialNumToRender={3}
+            maxToRenderPerBatch={1}
+            windowSize={3}
+            horizontal
+            pagingEnabled
+            initialScrollIndex={currentItemIndex}
+            style={styles.flatList}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.content}
+            onEndReached={this.loadMoreData}
+            onEndReachedThreshold={0.1}
+            keyExtractor={(item, index) => {
+              return item.id.toString();
+            }}
+            onScrollToIndexFailed={() => {}}
+            renderItem={data => {
+              return <Item item={data.item} index={data.index} />;
+            }}
+            viewabilityConfig={viewabilityConfig}
+            onViewableItemsChanged={this.handleViewableItemsChanged}
+          />
+
+          <ItemControls
+            show={infoShow}
+            seek={this.state.currentSeek}
+            item={this.state.currentItemData}
+            muted={this.state.isMuted}
+            onMutePress={this.handleSetMuted}
+          />
+        </View>
+        {/* </DoubleTap> */}
+      </VideoContext.Provider>
     );
   }
 }

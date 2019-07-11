@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Dimensions, Text, ActivityIndicator } from 'react-native';
 import Video, { OnProgressData, OnLoadData, LoadError, OnSeekData } from 'react-native-video';
-import { ItemControls, EItemControlsShow } from './ItemControls';
-import { DoubleTap } from './DoubleTap';
+import { VideoContext, IVideoContext } from './HomeScreen';
 
 export enum EItemType {
   Video,
@@ -28,17 +27,11 @@ export interface IItem {
 interface IProps {
   index: number;
   item: IItem;
-  current: boolean;
-  scrolling: boolean;
-  onNextSlide: () => void;
 }
 
 interface IState {
   loading: boolean;
   paused: boolean;
-  seek: number;
-  muted: boolean;
-  infoShow: EItemControlsShow;
 }
 
 const { width, height } = Dimensions.get('window');
@@ -47,20 +40,20 @@ export class Item extends React.Component<IProps, IState> {
   state = {
     loading: true,
     paused: false,
-    seek: 0,
-    muted: true,
-    infoShow: EItemControlsShow.Crop,
   };
 
   player: Video | null = null;
+  videoContext: IVideoContext | null = null;
 
   componentDidMount() {
+    this.replay();
+  }
+
+  replay = () => {
     if (this.player) {
       this.player.seek(0);
     }
-  }
-
-  replay = () => {};
+  };
 
   handleReadyForDisplay = () => {
     this.replay();
@@ -70,28 +63,21 @@ export class Item extends React.Component<IProps, IState> {
 
   handleOnProgress = (e: OnProgressData) => {
     this.setState({ loading: false });
-    this.setState({ seek: Math.round((e.currentTime / e.seekableDuration) * 100) });
-  };
 
-  handleEnd = () => {
-    this.setState({ paused: false });
-    this.replay();
-    this.props.onNextSlide();
-  };
-
-  handleOnLoad = (e: OnLoadData) => {};
-
-  setAllControlsVisible = () => {
-    if (this.state.infoShow === EItemControlsShow.Crop) {
-      this.setState({ infoShow: EItemControlsShow.Full });
-    } else {
-      this.setState({ infoShow: EItemControlsShow.Crop });
+    if (this.videoContext) {
+      this.videoContext.setCurrentSeek(Math.round((e.currentTime / e.seekableDuration) * 100));
     }
   };
 
-  handleDoublePress = () => {
-    this.setAllControlsVisible();
+  handleEnd = () => {
+    this.replay();
+
+    if (this.videoContext) {
+      this.videoContext.onNextSlide();
+    }
   };
+
+  handleOnLoad = (e: OnLoadData) => {};
 
   handlePressIn = () => {
     this.setState({ paused: true });
@@ -103,66 +89,55 @@ export class Item extends React.Component<IProps, IState> {
 
   handleOnError = (e: LoadError) => {};
 
-  handleMuted = () => {
-    this.setState({ muted: !this.state.muted });
-  };
-
   render() {
-    const { current, scrolling, item } = this.props;
-    const { loading, paused, muted, seek, infoShow } = this.state;
+    const { item, index } = this.props;
+    const { loading, paused } = this.state;
 
-    if (current || (scrolling && !current)) {
-      return (
-        <View style={styles.root}>
-          {loading && (
-            <View style={styles.loading}>
-              <ActivityIndicator color={'#fff'} size='large' />
-            </View>
-          )}
+    return (
+      <View style={styles.root}>
+        <VideoContext.Consumer>
+          {videoContext => {
+            if (!this.videoContext) {
+              this.videoContext = videoContext;
+            }
 
-          {muted && (
-            <View style={styles.loading}>
-              <Text>Muted</Text>
-            </View>
-          )}
+            const current = index === videoContext.currentItemIndex;
 
-          <DoubleTap
-            onDoubleTap={this.handleDoublePress}
-            handlePressIn={this.handlePressIn}
-            handlePressOut={this.handlePressOut}
-          >
-            <Video
-              muted={muted}
-              poster={item.poster}
-              paused={paused || !current}
-              source={{ uri: item.source }}
-              playInBackground={false}
-              resizeMode='cover'
-              posterResizeMode='cover'
-              onReadyForDisplay={this.handleReadyForDisplay}
-              onProgress={this.handleOnProgress}
-              ref={ref => (this.player = ref)}
-              onEnd={this.handleEnd}
-              onSeek={this.handleOnSeek}
-              onLoad={this.handleOnLoad}
-              onError={this.handleOnError}
-              style={styles.backgroundVideo}
-            />
-          </DoubleTap>
+            if (current || (videoContext.isScrolling && !current)) {
+              return (
+                <View style={styles.root}>
+                  {loading && (
+                    <View style={styles.loading}>
+                      <ActivityIndicator color={'#fff'} size='large' />
+                    </View>
+                  )}
 
-          <ItemControls
-            show={infoShow}
-            current={current}
-            seek={seek}
-            item={item}
-            muted={muted}
-            onMutePress={this.handleMuted}
-          />
-        </View>
-      );
-    } else {
-      return <View style={styles.root} />;
-    }
+                  <Video
+                    muted={videoContext.isMuted}
+                    poster={item.poster}
+                    paused={paused || !current}
+                    source={{ uri: item.source }}
+                    playInBackground={false}
+                    resizeMode='cover'
+                    posterResizeMode='cover'
+                    onReadyForDisplay={this.handleReadyForDisplay}
+                    onProgress={this.handleOnProgress}
+                    ref={ref => (this.player = ref)}
+                    onEnd={this.handleEnd}
+                    onSeek={this.handleOnSeek}
+                    onLoad={this.handleOnLoad}
+                    onError={this.handleOnError}
+                    style={styles.backgroundVideo}
+                  />
+                </View>
+              );
+            } else {
+              return null;
+            }
+          }}
+        </VideoContext.Consumer>
+      </View>
+    );
   }
 }
 

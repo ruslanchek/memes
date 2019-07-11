@@ -25,10 +25,9 @@ export enum EItemControlsShow {
 }
 
 interface IProps {
-  item: IItem;
+  item: IItem | null;
   seek: number;
   muted: boolean;
-  current: boolean;
   show: EItemControlsShow;
   onMutePress: () => void;
 }
@@ -82,8 +81,12 @@ export class ItemControls extends React.Component<IProps, IState> {
   }
 
   render() {
-    const { item, seek, show, muted, onMutePress } = this.props;
+    const { item, seek, muted, onMutePress } = this.props;
     const { infoAnimated, controlsVisible } = this.state;
+
+    if (!item) {
+      return null;
+    }
 
     return (
       <Animated.View
