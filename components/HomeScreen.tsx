@@ -12,7 +12,7 @@ import { Item, IItem, EItemType } from './Item';
 import { ItemControls, EItemControlsShow } from './ItemControls';
 import { DoubleTap } from './DoubleTap';
 
-interface IProps {}
+interface IProps { }
 
 interface IState {
   currentItemIndex: number;
@@ -181,10 +181,10 @@ export const VideoContext = React.createContext<IVideoContext>({
   currentSeek: 0,
   currentItemIndex: 0,
   isScrolling: false,
-  setLoading: () => {},
-  setMuted: () => {},
-  setCurrentSeek: () => {},
-  onNextSlide: () => {},
+  setLoading: () => { },
+  setMuted: () => { },
+  setCurrentSeek: () => { },
+  onNextSlide: () => { },
 });
 
 export class HomeScreen extends Component<IProps, IState> {
@@ -226,7 +226,7 @@ export class HomeScreen extends Component<IProps, IState> {
     }
   };
 
-  loadMoreData() {}
+  loadMoreData() { }
 
   handleNextSlide = () => {
     if (this.list) {
@@ -307,64 +307,64 @@ export class HomeScreen extends Component<IProps, IState> {
           onNextSlide: this.handleNextSlide,
         }}
       >
-        {/* <DoubleTap onDoubleTap={this.setAllControlsVisible}> */}
-        <View style={styles.root}>
-          <FlatList<IItem>
-            ref={ref => (this.list = ref)}
-            data={this.data}
-            initialNumToRender={3}
-            maxToRenderPerBatch={3}
-            windowSize={3}
-            // onScroll={this.handleScroll}
-            horizontal
-            pagingEnabled
-            initialScrollIndex={currentItemIndex}
-            style={styles.flatList}
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.content}
-            onEndReached={this.loadMoreData}
-            onEndReachedThreshold={0.1}
-            keyExtractor={(item, index) => {
-              return item.id.toString();
-            }}
-            getItemLayout={(data, index) => ({
-              length: width,
-              offset: width * index,
-              index,
-            })}
-            onScrollToIndexFailed={() => {}}
-            renderItem={data => {
-              // return <Item item={data.item} index={data.index} />;
-              return (
-                <View
-                  style={{
-                    width,
-                    height,
-                    backgroundColor: 'gray',
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Text>Index: {data.index}</Text>
-                  <Text>Data id: {data.item.id}</Text>
-                </View>
-              );
-            }}
-            viewabilityConfig={viewabilityConfig}
-            onViewableItemsChanged={this.handleViewableItemsChanged}
-          />
+        <DoubleTap onDoubleTap={this.setAllControlsVisible}>
+          <View style={styles.root}>
+            <FlatList<IItem>
+              ref={ref => (this.list = ref)}
+              data={this.data}
+              initialNumToRender={3}
+              maxToRenderPerBatch={3}
+              windowSize={3}
+              onScroll={this.handleScroll}
+              horizontal
+              pagingEnabled
+              initialScrollIndex={currentItemIndex}
+              style={styles.flatList}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.content}
+              onEndReached={this.loadMoreData}
+              onEndReachedThreshold={0.1}
+              keyExtractor={(item, index) => {
+                return item.id.toString();
+              }}
+              getItemLayout={(data, index) => ({
+                length: width,
+                offset: width * index,
+                index,
+              })}
+              onScrollToIndexFailed={() => { }}
+              renderItem={data => {
+                return <Item item={data.item} index={data.index} />;
+                // return (
+                //   <View
+                //     style={{
+                //       width,
+                //       height,
+                //       backgroundColor: 'gray',
+                //       flex: 1,
+                //       justifyContent: 'center',
+                //       alignItems: 'center',
+                //     }}
+                //   >
+                //     <Text>Index: {data.index}</Text>
+                //     <Text>Data id: {data.item.id}</Text>
+                //   </View>
+                // );
+              }}
+              viewabilityConfig={viewabilityConfig}
+              onViewableItemsChanged={this.handleViewableItemsChanged}
+            />
 
-          {/* <ItemControls
-            show={infoShow}
-            seek={this.state.currentSeek}
-            item={this.state.currentItemData}
-            muted={this.state.isMuted}
-            onMutePress={this.handleSetMuted}
-          /> */}
-        </View>
-        {/* </DoubleTap> */}
+            <ItemControls
+              show={infoShow}
+              seek={this.state.currentSeek}
+              item={this.state.currentItemData}
+              muted={this.state.isMuted}
+              onMutePress={this.handleSetMuted}
+            />
+          </View>
+        </DoubleTap>
       </VideoContext.Provider>
     );
   }
